@@ -84,7 +84,6 @@ public class TeacherManager implements ITeacher {
     public void readFromFile() {
         File file = new File(FILE_PATH);
         if (!file.exists()) return;
-
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine(); // bỏ dòng tiêu đề
             while ((line = reader.readLine()) != null) {

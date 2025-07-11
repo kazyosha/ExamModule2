@@ -24,12 +24,14 @@ public class StudentManager implements IStudent {
 
     private String inputName() {
         while (true) {
-            System.out.print("Nhập tên học sinh: ");
+            System.out.print("Nhập tên học sinh (4–50 ký tự): ");
             String name = sc.nextLine().trim();
             if (name.isEmpty()) {
-                System.out.println("Tên không được để trống.");
-            } else if (!name.matches("^[a-zA-Z\\p{L} ]+$")) {
-                System.out.println("Tên không hợp lệ. Không được chứa số hoặc ký tự đặc biệt.");
+                System.out.println("❌ Tên không được để trống.");
+            } else if (name.length() < 4 || name.length() > 50) {
+                System.out.println("❌ Tên phải từ 4 đến 50 ký tự.");
+            } else if (!name.matches("^[a-zA-ZÀ-ỹ\\s]+$")) {
+                System.out.println("❌ Tên chỉ được chứa chữ cái và khoảng trắng.");
             } else {
                 return name;
             }
@@ -69,10 +71,24 @@ public class StudentManager implements IStudent {
 
     private String inputPhoneNumber() {
         while (true) {
-            System.out.print("Nhập số điện thoại (10 chữ số): ");
+            System.out.print("Nhập số điện thoại (10 số bắt đầu bằng 0): ");
             String phone = sc.nextLine().trim();
+
             if (!phone.matches("^0\\d{9}$")) {
-                System.out.println("Số điện thoại không hợp lệ.");
+                System.out.println("❌ Số điện thoại không hợp lệ.");
+                continue;
+            }
+
+            boolean exists = false;
+            for (Student s : students) {
+                if (s.getPhoneNumber().equals(phone)) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (exists) {
+                System.out.println("❌ Số điện thoại đã tồn tại. Vui lòng nhập số khác.");
             } else {
                 return phone;
             }
@@ -147,7 +163,7 @@ public class StudentManager implements IStudent {
         }
 
         if (studentToRemove == null) {
-            throw new StudentNotFoundException(" Không tìm thấy học sinh với ID: " + idToDelete);
+            throw new StudentNotFoundException("Không tìm thấy học sinh với ID: " + idToDelete);
         }
 
         System.out.println("Tìm thấy học sinh: " + studentToRemove.getStudentName());
@@ -156,11 +172,10 @@ public class StudentManager implements IStudent {
 
         if (confirm.equalsIgnoreCase("yes")) {
             students.remove(studentToRemove);
+            saveToFile(); //
             System.out.println("Đã xóa học sinh thành công.");
         } else {
             System.out.println("Hủy thao tác xóa.");
-
-            saveToFile();
         }
     }
 
@@ -189,7 +204,6 @@ public class StudentManager implements IStudent {
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            writer.write("id,studentName,dateOfBirth,gender,phoneNumber,idClass");
             writer.newLine();
 
             for (Student s : students) {

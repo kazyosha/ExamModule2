@@ -73,7 +73,6 @@ public class ClassManage implements IClass {
     public void readFromFile() {
         File file = new File(FILE_PATH);
         if (!file.exists()) return;
-
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine(); // bỏ header
             while ((line = reader.readLine()) != null) {
