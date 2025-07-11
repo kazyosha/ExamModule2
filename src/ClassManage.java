@@ -56,7 +56,6 @@ public class ClassManage implements IClass {
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write("idClass,className,idTeacher");
             writer.newLine();
             for (SchoolClass c : classes) {
                 String line = String.join(",", c.getIdClass(), c.getClassName(), c.getIdTeacher());
